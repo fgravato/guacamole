@@ -1,4 +1,4 @@
-FROM tomcat:9-jdk16
+FROM tomcat:10-jdk16
 
 ENV ARCH=amd64 \
   GUAC_VER=1.3.0 \
@@ -26,12 +26,11 @@ WORKDIR ${GUACAMOLE_HOME}
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-    libcairo2-dev libjpeg62-turbo-dev libpng-dev \
-    libossp-uuid-dev libavcodec-dev libavutil-dev \
-    libswscale-dev freerdp2-dev libfreerdp-client2-2 libpango1.0-dev \
-    libssh2-1-dev libtelnet-dev libvncserver-dev \
-    libpulse-dev libssl-dev libvorbis-dev libwebp-dev libwebsockets-dev \
-    ghostscript postgresql-${PG_MAJOR} gcc autotools-dev autoconf \
+    gcc g++ libcairo2-dev libjpeg-turbo8-dev libpng-dev \
+    libtool-bin libossp-uuid-dev libavcodec-dev libavutil-dev libswscale-dev \
+    freerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libtelnet-dev \
+    libssl-dev libvorbis-dev libwebp-dev \
+    ghostscript postgresql-${PG_MAJOR} \
   && rm -rf /var/lib/apt/lists/*
 
 # Link FreeRDP to where guac expects it to be
@@ -42,8 +41,8 @@ RUN [ "$ARCH" = "amd64" ] && ln -s /usr/local/lib/freerdp /usr/lib/x86_64-linux-
 RUN curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/source/guacamole-server-${GUAC_VER}.tar.gz" \
   && tar -xzf guacamole-server-${GUAC_VER}.tar.gz \
   && cd guacamole-server-${GUAC_VER} \
-  && ./configure --enable-allow-freerdp-snapshots \
-  && make -j$(getconf _NPROCESSORS_ONLN) \
+  && ./configure --with-init-dir=/etc/init.d \
+  && make \
   && make install \
   && cd .. \
   && rm -rf guacamole-server-${GUAC_VER}.tar.gz guacamole-server-${GUAC_VER} \
