@@ -1,4 +1,4 @@
-FROM tomcat:jdk11-corretto
+FROM tomcat:10-jdk16-openjdk-slim
 
 ENV ARCH=amd64 \
   GUAC_VER=1.3.0 \
