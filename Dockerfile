@@ -26,10 +26,10 @@ WORKDIR ${GUACAMOLE_HOME}
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
-    gcc g++ libcairo2-dev libjpeg62-turbo-dev libpng-dev \
-    libtool-bin libossp-uuid-dev libavcodec-dev libavutil-dev libswscale-dev \
-    freerdp2-dev libpango1.0-dev libssh2-1-dev libvncserver-dev libtelnet-dev \
-    libssl-dev libvorbis-dev libwebp-dev \
+    build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
+    libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
+    libpango1.0-dev libssh2-1-dev libvncserver-dev libtelnet-dev \
+    libssl-dev libvorbis-dev libwebp-dev libpulse-dev freerdp2-dev libfreerdp-client2-2 \
     ghostscript postgresql-${PG_MAJOR} \
   && rm -rf /var/lib/apt/lists/*
 
