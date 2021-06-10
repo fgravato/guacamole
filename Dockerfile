@@ -3,7 +3,7 @@ FROM tomcat:10-jdk16
 ENV ARCH=amd64 \
   GUAC_VER=1.3.0 \
   GUACAMOLE_HOME=/app/guacamole \
-  PG_MAJOR=9.6 \
+  PG_MAJOR=11 \
   PGDATA=/config/postgres \
   POSTGRES_USER=guacamole \
   POSTGRES_DB=guacamole_db \
@@ -21,10 +21,6 @@ RUN \
   && mkdir -p ${GUACAMOLE_HOME} \
     ${GUACAMOLE_HOME}/lib \
     ${GUACAMOLE_HOME}/extensions
-
-RUN \
-  useradd -u 912 -U -s /bin/false postgres && \
-  usermod -G users postgres
 
 WORKDIR ${GUACAMOLE_HOME}
 
