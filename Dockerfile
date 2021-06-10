@@ -22,6 +22,10 @@ RUN \
     ${GUACAMOLE_HOME}/lib \
     ${GUACAMOLE_HOME}/extensions
 
+RUN \
+  useradd -u 912 -U -s /bin/false postgres && \
+  usermod -G users postgres
+
 WORKDIR ${GUACAMOLE_HOME}
 
 # Install dependencies
@@ -32,10 +36,6 @@ RUN apt-get update && apt-get install -y \
     libssl-dev libvorbis-dev libwebp-dev libpulse-dev freerdp2-dev libfreerdp-client2-2 \
     ghostscript postgresql-${PG_MAJOR} \
   && rm -rf /var/lib/apt/lists/*
-
-RUN  useradd -u 912 -U -s /bin/false postgres && \
-     usermod -G users postgres &&
-
 
 # Link FreeRDP to where guac expects it to be
 RUN [ "$ARCH" = "armhf" ] && ln -s /usr/local/lib/freerdp /usr/lib/arm-linux-gnueabihf/freerdp || exit 0
