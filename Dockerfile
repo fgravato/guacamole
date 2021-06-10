@@ -33,6 +33,10 @@ RUN apt-get update && apt-get install -y \
     ghostscript postgresql-${PG_MAJOR} \
   && rm -rf /var/lib/apt/lists/*
 
+RUN  useradd -u 912 -U -s /bin/false postgres && \
+     usermod -G users postgres &&
+
+
 # Link FreeRDP to where guac expects it to be
 RUN [ "$ARCH" = "armhf" ] && ln -s /usr/local/lib/freerdp /usr/lib/arm-linux-gnueabihf/freerdp || exit 0
 RUN [ "$ARCH" = "amd64" ] && ln -s /usr/local/lib/freerdp /usr/lib/x86_64-linux-gnu/freerdp || exit 0
