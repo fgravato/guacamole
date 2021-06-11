@@ -26,13 +26,14 @@ RUN \
 WORKDIR ${GUACAMOLE_HOME}
 
 # Install dependencies
-RUN apt-get update && apt-get install -y \
+RUN echo "deb http://deb.debian.org/debian buster-backports main" > /etc/apt/sources.list.d/backports.list \
+    && apt-get update && apt-get install -y \
     build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
     libpango1.0-dev libssh2-1-dev libvncserver-dev libtelnet-dev \
-    libssl-dev libvorbis-dev libwebp-dev libpulse-dev freerdp2-dev libfreerdp-client2-2 \
+    libssl-dev libvorbis-dev libwebp-dev libpulse-dev freerdp2-dev/buster-backports \
     ghostscript postgresql-${PG_MAJOR} \
-  && rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*
 
 # Link FreeRDP to where guac expects it to be
 RUN [ "$ARCH" = "armhf" ] && ln -s /usr/local/lib/freerdp /usr/lib/arm-linux-gnueabihf/freerdp || exit 0
@@ -42,7 +43,7 @@ RUN [ "$ARCH" = "amd64" ] && ln -s /usr/local/lib/freerdp /usr/lib/x86_64-linux-
 RUN curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/source/guacamole-server-${GUAC_VER}.tar.gz" \
   && tar -xzf guacamole-server-${GUAC_VER}.tar.gz \
   && cd guacamole-server-${GUAC_VER} \
-  && ./configure --with-init-dir=/etc/init.d --enable-allow-freerdp-snapshots\
+  && ./configure --with-init-dir=/etc/init.d \
   && make \
   && make install \
   && cd .. \
