@@ -1,4 +1,5 @@
 FROM bitnami/tomcat
+USER root
 
 ENV ARCH=amd64 \
   GUAC_VER=1.3.0 \
