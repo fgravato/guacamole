@@ -32,12 +32,12 @@ RUN \
     build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
     libpango1.0-dev libssh2-1-dev libvncserver-dev libtelnet-dev \
-    libssl-dev libvorbis-dev libwebp-dev libpulse-dev freerdp2-dev/buster-backports \
+    libssl-dev libvorbis-dev libwebp-dev libpulse-dev \
     ghostscript postgresql-${PG_MAJOR} \
+    && apt-get install -t buster-backports freerdp2-dev -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Link FreeRDP to where guac expects it to be
-RUN [ "$ARCH" = "armhf" ] && ln -s /usr/local/lib/freerdp /usr/lib/arm-linux-gnueabihf/freerdp || exit 0
 RUN [ "$ARCH" = "amd64" ] && ln -s /usr/local/lib/freerdp /usr/lib/x86_64-linux-gnu/freerdp || exit 0
 
 # Install guacamole-server
