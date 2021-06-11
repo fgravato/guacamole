@@ -28,7 +28,7 @@ WORKDIR ${GUACAMOLE_HOME}
 # Install dependencies
 RUN \
     echo "deb http://deb.debian.org/debian buster-backports main" > /etc/apt/sources.list.d/backports.list \
-    && apt-get update && apt-get install -y \
+    && apt-get update && apt-get install -f -y \
     build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
     libpango1.0-dev libssh2-1-dev libvncserver-dev libtelnet-dev \
