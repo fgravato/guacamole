@@ -3,7 +3,7 @@ FROM tomcat:10-jdk16
 ENV ARCH=amd64 \
   GUAC_VER=1.3.0 \
   GUACAMOLE_HOME=/app/guacamole \
-  PG_MAJOR=11 \
+  PG_MAJOR=13 \
   PGDATA=/config/postgres \
   POSTGRES_USER=guacamole \
   POSTGRES_DB=guacamole_db \
@@ -70,7 +70,7 @@ RUN set -xe \
     && rm -rf guacamole-${i}-${GUAC_VER} guacamole-${i}-${GUAC_VER}.tar.gz \
   ;done
 
-ENV PATH=/usr/lib/postgresql/${PG_MAJOR}/bin:$PATH
+ENV PATH="/usr/lib/postgresql/${PG_MAJOR}/bin:$PATH"
 ENV GUACAMOLE_HOME=/config/guacamole
 
 WORKDIR /config
