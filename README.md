@@ -1,5 +1,16 @@
 **:warning: The original creator abandoned this, so I reworked a few things rebased it with bitnami/tomcat and brought all packages current.**
 
+Project: https://git.largenut.com/unsafetypin/docker-guacamole
+
+# Versions
+```
+Debian: 10
+Guacamole: 1.3.0
+Postgresql: 11
+S6-overlay: 2.2.0.3
+freerdp: 2.3.0 via debian-buster-backports
+```
+
 # Docker Guacamole
 
 A Docker Container for [Apache Guacamole](https://guacamole.apache.org/), a client-less remote desktop gateway. It supports standard protocols like VNC, RDP, and SSH over HTML5.
