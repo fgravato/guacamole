@@ -13,11 +13,13 @@ variables:
 stages:
 - build
 - release
+- dockerhub
 
 variables:
   TEST_IMAGE: registry.largenut.com/unsafetypin/docker-guacamole/docker-guacamole:$CI_COMMIT_REF_NAME
   RELEASE_IMAGE: registry.largenut.com/unsafetypin/docker-guacamole/docker-guacamole:latest
-  
+  DOCKERHUB_IMAGE: unsafetypin/guacamole:latest
+
 before_script:
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.largenut.com
 build:
@@ -35,5 +37,16 @@ release:
     - docker pull $TEST_IMAGE
     - docker tag $TEST_IMAGE $RELEASE_IMAGE
     - docker push $RELEASE_IMAGE
+  only:
+    - master
+    
+dockerhub:
+  stage: dockerhub
+  before_script:
+  - docker login -u $dockerhub_username -p $dockerhub_token
+  script:
+    - docker pull $RELEASE_IMAGE
+    - docker tag $RELEASE_IMAGE $DOCKERHUB_IMAGE
+    - docker push $DOCKERHUB_IMAGE
   only:
     - master
