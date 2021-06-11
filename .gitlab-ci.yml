@@ -25,6 +25,9 @@ build:
   script:
     - docker build --pull -t $TEST_IMAGE .
     - docker push $TEST_IMAGE
+  only:
+    changes:
+      - Dockerfile
 
 release:
   stage: release
