@@ -33,7 +33,7 @@ RUN echo "deb http://deb.debian.org/debian buster-backports main" > /etc/apt/sou
     libpango1.0-dev libssh2-1-dev libvncserver-dev libtelnet-dev \
     libssl-dev libvorbis-dev libwebp-dev libpulse-dev freerdp2-dev/buster-backports \
     ghostscript postgresql-${PG_MAJOR} \
-    rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
 # Link FreeRDP to where guac expects it to be
 RUN [ "$ARCH" = "armhf" ] && ln -s /usr/local/lib/freerdp /usr/lib/arm-linux-gnueabihf/freerdp || exit 0
