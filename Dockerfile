@@ -1,4 +1,5 @@
 FROM bitnami/tomcat
+LABEL maintainer="gregg@largenut.com"
 USER root
 
 ENV ARCH=amd64 \
