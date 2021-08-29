@@ -1,4 +1,4 @@
-FROM bitnami/tomcat:10.0.10-debian-10-r19
+FROM bitnami/tomcat
 LABEL maintainer="gregg@largenut.com"
 USER root
 
