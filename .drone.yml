@@ -7,7 +7,7 @@ steps:
   settings:
     repo: unsafetypin/guacamole
     auto_tag: true
-    auto_tag_suffix: testing   
+    auto_tag_suffix: latest  
     username:
       from_secret: docker_username
     password:
