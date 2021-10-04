@@ -6,11 +6,10 @@ steps:
   image: plugins/docker
   settings:
     repo: unsafetypin/guacamole
-    auto_tag: true
-    auto_tag_suffix: latest  
+    tags: 1.1.0
     username:
       from_secret: docker_username
     password:
       from_secret: dockerhub
     when:
-      branch: master
+      branch: 1.1.0
