@@ -51,8 +51,6 @@ RUN curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamo
   && rm -rf guacamole-server-${GUAC_VER}.tar.gz guacamole-server-${GUAC_VER} \
   && ldconfig
 
-WORKDIR ${GUACAMOLE_HOME}
-
 # Install guacamole-client and postgres auth adapter
 RUN set -x \
   && curl -SLo /bitnami/tomcat/webapps/ROOT.war "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${GUAC_VER}.war" \
@@ -62,8 +60,6 @@ RUN set -x \
   && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/guacamole-auth-jdbc-postgresql-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions/ \
   && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/schema ${GUACAMOLE_HOME}/ \
   && rm -rf guacamole-auth-jdbc-${GUAC_VER} guacamole-auth-jdbc-${GUAC_VER}.tar.gz
-
-WORKDIR ${GUACAMOLE_HOME}
 
 # Add optional extensions
 RUN set -xe \
