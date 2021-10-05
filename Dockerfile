@@ -20,11 +20,11 @@ RUN \
   && tar -xzf s6-overlay-${ARCH}.tar.gz -C / \
   && tar -xzf s6-overlay-${ARCH}.tar.gz -C /usr ./bin \
   && rm -rf s6-overlay-${ARCH}.tar.gz \
-  && mkdir -p ${GUACAMOLE_HOME} \
-    ${GUACAMOLE_HOME}/lib \
-    ${GUACAMOLE_HOME}/extensions
+  && mkdir -p /app/guacamole \
+    /app/guacamole/lib \
+    /app/guacamole/extensions
 
-WORKDIR ${GUACAMOLE_HOME}
+WORKDIR /app/guacamole
 
 # Install dependencies
 RUN \
@@ -56,21 +56,21 @@ RUN curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamo
 # Install guacamole-client and postgres auth adapter
 RUN set -x \
   && curl -SLo /bitnami/tomcat/webapps/ROOT.war "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${GUAC_VER}.war" \
-  && curl -SLo ${GUACAMOLE_HOME}/lib/postgresql-42.1.4.jar "https://jdbc.postgresql.org/download/postgresql-42.1.4.jar" \
+  && curl -SLo /app/guacamole/lib/postgresql-42.1.4.jar "https://jdbc.postgresql.org/download/postgresql-42.1.4.jar" \
   && curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-auth-jdbc-${GUAC_VER}.tar.gz" \
   && tar -xzf guacamole-auth-jdbc-${GUAC_VER}.tar.gz \
-  && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/guacamole-auth-jdbc-postgresql-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions/ \
-  && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/schema ${GUACAMOLE_HOME}/ \
+  && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/guacamole-auth-jdbc-postgresql-${GUAC_VER}.jar /app/guacamole/extensions/ \
+  && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/schema /app/guacamole/ \
   && rm -rf guacamole-auth-jdbc-${GUAC_VER} guacamole-auth-jdbc-${GUAC_VER}.tar.gz
 
 # Add optional extensions
 RUN set -xe \
-  && mkdir ${GUACAMOLE_HOME}/extensions-available \
+  && mkdir /app/guacamole/extensions-available \
   && for i in auth-ldap auth-duo auth-header auth-cas auth-openid auth-quickconnect auth-totp; do \
     echo "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && tar -xzf guacamole-${i}-${GUAC_VER}.tar.gz \
-    && cp guacamole-${i}-${GUAC_VER}/guacamole-${i}-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions-available/ \
+    && cp guacamole-${i}-${GUAC_VER}/guacamole-${i}-${GUAC_VER}.jar /app/guacamole/extensions-available/ \
     && rm -rf guacamole-${i}-${GUAC_VER} guacamole-${i}-${GUAC_VER}.tar.gz \
   ;done
 
