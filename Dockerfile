@@ -74,10 +74,6 @@ RUN set -xe \
     && rm -rf guacamole-${i}-${GUAC_VER} guacamole-${i}-${GUAC_VER}.tar.gz \
   ;done
 
-RUN set -x \
-  && mv /bitnami/tomcat/webapps/guacamole/* /app/guacamole \
-  && rmdir /bitnami/tomcat/webapps/guacamole
-
 ENV PATH="/usr/lib/postgresql/${PG_MAJOR}/bin:$PATH"
 ENV GUACAMOLE_HOME=/config/guacamole
 
