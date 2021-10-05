@@ -1,6 +1,5 @@
 FROM bitnami/tomcat
 LABEL maintainer="gregg@largenut.com"
-USER root
 
 ENV ARCH=amd64 \
   GUAC_VER=1.3.0 \
