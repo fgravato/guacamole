@@ -75,7 +75,7 @@ RUN set -xe \
   ;done
 
 RUN set -x \
-  && mv /bitnami/tomcat/webapps/guacamole/* /config/guacamole \
+  && mv /bitnami/tomcat/webapps/guacamole/* /app/guacamole \
   && rmdir /bitnami/tomcat/webapps/guacamole
 
 ENV PATH="/usr/lib/postgresql/${PG_MAJOR}/bin:$PATH"
