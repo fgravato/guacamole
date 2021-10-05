@@ -1,4 +1,4 @@
-FROM bitnami/tomcat:9.0.52-debian-10-r18
+FROM bitnami/tomcat
 LABEL maintainer="gregg@largenut.com"
 USER root
 
@@ -12,7 +12,6 @@ ENV ARCH=amd64 \
   S6_OVERLAY_VERSION=2.2.0.3
 
 # Apply the s6-overlay
-
 RUN \
   apt-get update \
   && apt-get install -y curl \
@@ -20,11 +19,11 @@ RUN \
   && tar -xzf s6-overlay-${ARCH}.tar.gz -C / \
   && tar -xzf s6-overlay-${ARCH}.tar.gz -C /usr ./bin \
   && rm -rf s6-overlay-${ARCH}.tar.gz \
-  && mkdir -p /app/guacamole \
-    /app/guacamole/lib \
-    /app/guacamole/extensions
+  && mkdir -p ${GUACAMOLE_HOME} \
+    ${GUACAMOLE_HOME}/lib \
+    ${GUACAMOLE_HOME}/extensions
 
-WORKDIR /app/guacamole
+WORKDIR ${GUACAMOLE_HOME}
 
 # Install dependencies
 RUN \
@@ -53,24 +52,26 @@ RUN curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamo
   && rm -rf guacamole-server-${GUAC_VER}.tar.gz guacamole-server-${GUAC_VER} \
   && ldconfig
 
+WORKDIR ${GUACAMOLE_HOME}
+
 # Install guacamole-client and postgres auth adapter
 RUN set -x \
   && curl -SLo /bitnami/tomcat/webapps/ROOT.war "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${GUAC_VER}.war" \
-  && curl -SLo /app/guacamole/lib/postgresql-42.1.4.jar "https://jdbc.postgresql.org/download/postgresql-42.1.4.jar" \
+  && curl -SLo ${GUACAMOLE_HOME}/lib/postgresql-42.1.4.jar "https://jdbc.postgresql.org/download/postgresql-42.1.4.jar" \
   && curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-auth-jdbc-${GUAC_VER}.tar.gz" \
   && tar -xzf guacamole-auth-jdbc-${GUAC_VER}.tar.gz \
-  && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/guacamole-auth-jdbc-postgresql-${GUAC_VER}.jar /app/guacamole/extensions/ \
-  && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/schema /app/guacamole/ \
+  && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/guacamole-auth-jdbc-postgresql-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions/ \
+  && cp -R guacamole-auth-jdbc-${GUAC_VER}/postgresql/schema ${GUACAMOLE_HOME}/ \
   && rm -rf guacamole-auth-jdbc-${GUAC_VER} guacamole-auth-jdbc-${GUAC_VER}.tar.gz
 
 # Add optional extensions
 RUN set -xe \
-  && mkdir /app/guacamole/extensions-available \
+  && mkdir ${GUACAMOLE_HOME}/extensions-available \
   && for i in auth-ldap auth-duo auth-header auth-cas auth-openid auth-quickconnect auth-totp; do \
     echo "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && tar -xzf guacamole-${i}-${GUAC_VER}.tar.gz \
-    && cp guacamole-${i}-${GUAC_VER}/guacamole-${i}-${GUAC_VER}.jar /app/guacamole/extensions-available/ \
+    && cp guacamole-${i}-${GUAC_VER}/guacamole-${i}-${GUAC_VER}.jar ${GUACAMOLE_HOME}/extensions-available/ \
     && rm -rf guacamole-${i}-${GUAC_VER} guacamole-${i}-${GUAC_VER}.tar.gz \
   ;done
 
