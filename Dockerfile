@@ -15,10 +15,7 @@ ENV ARCH=amd64 \
 # Apply the s6-overlay
 RUN \
   apt-get update \
-  && apt-get install -y curl ca-certificates gnupg \
-  && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
-  && echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
-  && apt-get update \
+  && apt-get install -y curl \
   && curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCH}.tar.gz" \
   && tar -xzf s6-overlay-${ARCH}.tar.gz -C / \
   && tar -xzf s6-overlay-${ARCH}.tar.gz -C /usr ./bin \
@@ -32,6 +29,10 @@ WORKDIR ${GUACAMOLE_HOME}
 # Install dependencies
 RUN \
     apt-get update \
+    && apt-get install -y curl ca-certificates gnupg \
+    && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
+    && echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+    && apt-get update \
     && apt-get install -y \
     build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
