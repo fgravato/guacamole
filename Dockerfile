@@ -1,4 +1,4 @@
-FROM bitnami/tomcat
+FROM tomcat:9.0-jdk11-openjdk-slim-bullseye
 LABEL maintainer="gregg@largenut.com"
 USER root
 
@@ -9,7 +9,8 @@ ENV ARCH=amd64 \
   PGDATA=/config/postgres \
   POSTGRES_USER=guacamole \
   POSTGRES_DB=guacamole_db \
-  S6_OVERLAY_VERSION=2.2.0.3
+  S6_OVERLAY_VERSION=2.2.0.3 \
+  CATALINA_HOME=/usr/local/tomcat
 
 # Apply the s6-overlay
 RUN \
@@ -54,7 +55,7 @@ RUN curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamo
 
 # Install guacamole-client and postgres auth adapter
 RUN set -x \
-  && curl -SLo /bitnami/tomcat/webapps/ROOT.war "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${GUAC_VER}.war" \
+  && curl -SLo ${CATALINA_HOME}/ROOT.war "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${GUAC_VER}.war" \
   && curl -SLo ${GUACAMOLE_HOME}/lib/postgresql-42.1.4.jar "https://jdbc.postgresql.org/download/postgresql-42.1.4.jar" \
   && curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-auth-jdbc-${GUAC_VER}.tar.gz" \
   && tar -xzf guacamole-auth-jdbc-${GUAC_VER}.tar.gz \
