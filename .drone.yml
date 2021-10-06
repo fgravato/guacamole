@@ -6,7 +6,7 @@ steps:
   image: plugins/docker
   settings:
     repo: unsafetypin/guacamole
-    tags: 1.1.0
+    tags: 1.1.0-postgres-11
     username:
       from_secret: docker_username
     password:
