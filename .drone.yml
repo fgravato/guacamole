@@ -6,10 +6,10 @@ steps:
   image: plugins/docker
   settings:
     repo: unsafetypin/guacamole
-    tags: 1.3.0-postgres-11
+    tags: 1.3.0-postgres-14
     username:
       from_secret: docker_username
     password:
       from_secret: dockerhub
     when:
-      branch: 1.3.0-postgres-11
+      branch: 1.3.0-postgres-14
