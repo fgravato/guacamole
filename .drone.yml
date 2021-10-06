@@ -6,10 +6,10 @@ steps:
   image: plugins/docker
   settings:
     repo: unsafetypin/guacamole
-    tags: 1.3.0
+    tags: testing-official-tomcat
     username:
       from_secret: docker_username
     password:
       from_secret: dockerhub
     when:
-      branch: 1.3.0
+      branch: testing-official-tomcat
