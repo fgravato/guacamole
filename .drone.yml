@@ -6,10 +6,10 @@ steps:
   image: plugins/docker
   settings:
     repo: unsafetypin/guacamole
-    tags: testing-official-tomcat
+    tags: 1.3.0-postgres-11
     username:
       from_secret: docker_username
     password:
       from_secret: dockerhub
     when:
-      branch: testing-official-tomcat
+      branch: 1.3.0
