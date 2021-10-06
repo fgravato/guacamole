@@ -6,11 +6,10 @@ steps:
   image: plugins/docker
   settings:
     repo: unsafetypin/guacamole
-    auto_tag: true
-    auto_tag_suffix: latest  
+    tags: testing-official-tomcat
     username:
       from_secret: docker_username
     password:
       from_secret: dockerhub
     when:
-      branch: master
+      branch: testing-official-tomcat
