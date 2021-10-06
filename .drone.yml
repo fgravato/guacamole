@@ -12,4 +12,4 @@ steps:
     password:
       from_secret: dockerhub
     when:
-      branch: 1.1.0
+      branch: 1.1.0-postgres-11
