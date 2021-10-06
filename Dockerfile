@@ -3,7 +3,7 @@ LABEL maintainer="gregg@largenut.com"
 USER root
 
 ENV ARCH=amd64 \
-  GUAC_VER=1.3.0 \
+  GUAC_VER=1.1.0 \
   GUACAMOLE_HOME=/app/guacamole \
   PG_MAJOR=9.6 \
   PGDATA=/config/postgres \
