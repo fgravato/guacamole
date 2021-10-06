@@ -28,15 +28,13 @@ WORKDIR ${GUACAMOLE_HOME}
 
 # Install dependencies
 RUN \
-    echo "deb http://deb.debian.org/debian buster-backports main" > /etc/apt/sources.list.d/backports.list \
-    && apt-get update \
+    apt-get update \
     && apt-get install -y \
     build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
     libpango1.0-dev libssh2-1-dev libvncserver-dev libtelnet-dev \
-    libssl-dev libvorbis-dev libwebp-dev libpulse-dev \
+    libssl-dev libvorbis-dev libwebp-dev libpulse-dev freerdp2-dev \
     ghostscript postgresql-${PG_MAJOR} \
-    && apt-get install -t buster-backports freerdp2-dev -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Link FreeRDP to where guac expects it to be
