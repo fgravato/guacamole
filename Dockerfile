@@ -1,4 +1,4 @@
-FROM tomcat:jdk11-openjdk-slim-bullseye
+FROM tomcat:9.0-jdk11-openjdk-slim-bullseye
 LABEL maintainer="gregg@largenut.com"
 USER root
 
