@@ -5,7 +5,7 @@ USER root
 ENV ARCH=amd64 \
   GUAC_VER=1.3.0 \
   GUACAMOLE_HOME=/app/guacamole \
-  PG_MAJOR=13 \
+  PG_MAJOR=11 \
   PGDATA=/config/postgres \
   POSTGRES_USER=guacamole \
   POSTGRES_DB=guacamole_db \
@@ -14,7 +14,8 @@ ENV ARCH=amd64 \
 
 # Apply the s6-overlay
 RUN \
-  apt-get update \
+  echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+  && apt-get update \
   && apt-get install -y curl \
   && curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCH}.tar.gz" \
   && tar -xzf s6-overlay-${ARCH}.tar.gz -C / \
