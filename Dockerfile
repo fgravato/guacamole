@@ -23,6 +23,7 @@ RUN \
     ${GUACAMOLE_HOME}/lib \
     ${GUACAMOLE_HOME}/extensions
 
+# set workdir
 WORKDIR ${GUACAMOLE_HOME}
 
 # Install dependencies
