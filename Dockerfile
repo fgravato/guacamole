@@ -75,7 +75,7 @@ RUN set -xe \
   && cp guacamole-auth-header-1.2.0/guacamole-auth-header-1.2.0.jar ${GUACAMOLE_HOME}/extensions-available/guacamole-auth-header-${GUAC_VER}.jar \
   && rm -rf guacamole-auth-header-1.2.0 guacamole-auth-header-1.2.0.tar.gz \
 # This ends adding the auth-header extension
-  && for i in auth-ldap auth-duo auth-cas auth-openid auth-quickconnect auth-totp; do \
+  && for i in auth-ldap auth-duo auth-cas auth-openid auth-quickconnect auth-totp auth-saml; do \
     echo "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && tar -xzf guacamole-${i}-${GUAC_VER}.tar.gz \
