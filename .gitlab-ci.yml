@@ -22,6 +22,8 @@ variables:
 
 build:
   stage: build
+  before_script:
+  - docker login -u $dockerhub_username -p $dockerhub_token
   script:
     - docker build --pull -t $TEST_IMAGE .
     - docker push $TEST_IMAGE
