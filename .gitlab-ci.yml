@@ -20,10 +20,11 @@ variables:
   RELEASE_IMAGE: registry.largenut.com/unsafetypin/docker-guacamole/docker-guacamole:latest
   DOCKERHUB_IMAGE: unsafetypin/guacamole:latest
 
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.largenut.com
+
 build:
   stage: build
-  before_script:
-  - docker login -u $dockerhub_username -p $dockerhub_token
   script:
     - docker build --pull -t $TEST_IMAGE .
     - docker push $TEST_IMAGE
