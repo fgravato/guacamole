@@ -1,5 +1,5 @@
 FROM tomcat:9.0-jdk11-openjdk-slim-bullseye
-LABEL maintainer="gregg@largenut.com"
+LABEL maintainer="grfegg@largenut.com"
 USER root
 
 ENV ARCH=amd64 \
