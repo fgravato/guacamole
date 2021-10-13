@@ -1,52 +1,25 @@
-image: docker:20-dind
-services:
-  - name: docker:20-dind
-    alias: docker
-    command: ["--tls=false"]
-variables:
-  DOCKER_DRIVER: overlay
-  DOCKER_HOST: /var/run/docker.sock
-  DOCKER_TLS_CERTDIR: ""
-  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  FF_GITLAB_REGISTRY_HELPER_IMAGE: 1
-
 stages:
-- build
-- release
-- dockerhub
+  - create-image
 
 variables:
-  TEST_IMAGE: registry.largenut.com/unsafetypin/docker-guacamole/docker-guacamole:$CI_COMMIT_REF_NAME
-  RELEASE_IMAGE: registry.largenut.com/unsafetypin/docker-guacamole/docker-guacamole:latest
-  DOCKERHUB_IMAGE: unsafetypin/guacamole:latest
+  DOCKER_BUILDKIT: 1
 
-before_script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.largenut.com
-build:
-  stage: build
+create-latest-image:
+  stage: create-image
+  image: docker:latest
+  services:
+   - name: docker:dind
+     command: ["--experimental"]
   script:
-    - docker build --pull -t $TEST_IMAGE .
-    - docker push $TEST_IMAGE
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - apk add curl
+    - mkdir -vp ~/.docker/cli-plugins/
+    - curl --silent -L "https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+    - chmod a+x ~/.docker/cli-plugins/docker-buildx
+    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    - docker buildx create --use
+    - docker buildx inspect --bootstrap
+    - docker buildx build --push --platform linux/amd64,linux/arm64 -t $CI_REGISTRY_IMAGE:1.3.0-postgres-11-multiarch .
+    - docker manifest inspect $CI_REGISTRY_IMAGE:1.3.0-postgres-11-multiarch
   only:
-    changes:
-      - Dockerfile
-
-release:
-  stage: release
-  script:
-    - docker pull $TEST_IMAGE
-    - docker tag $TEST_IMAGE $RELEASE_IMAGE
-    - docker push $RELEASE_IMAGE
-  only:
-    - master
-    
-dockerhub:
-  stage: dockerhub
-  before_script:
-  - docker login -u $dockerhub_username -p $dockerhub_token
-  script:
-    - docker pull $RELEASE_IMAGE
-    - docker tag $RELEASE_IMAGE $DOCKERHUB_IMAGE
-    - docker push $DOCKERHUB_IMAGE
-  only:
-    - master
+    - 1.3.0-postgres-11-multiarch
