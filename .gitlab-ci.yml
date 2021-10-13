@@ -7,7 +7,7 @@ variables:
 
 create-image-amd64:
   stage: create-image-amd64
-  image: docker:latest
+  image: moby/buildkit:master
   services:
    - name: docker:dind
      command: ["--experimental"]
@@ -21,7 +21,7 @@ create-image-amd64:
 
 create-image-arm64:
   stage: create-image-arm64
-  image: docker:latest
+  image: moby/buildkit:master
   services:
    - name: docker:dind
      command: ["--experimental"]
