@@ -25,6 +25,8 @@ create-image-amd64:
     - docker buildx build --push --platform linux/amd64 -t $CI_REGISTRY_IMAGE:1.3.0-postgres-11-amd64 .
   only:
     - 1.3.0-postgres-11-multiarch
+    changes:
+      - Dockerfile
 
 create-image-arm64:
   stage: create-image
@@ -42,6 +44,8 @@ create-image-arm64:
     - docker buildx build --push --platform linux/arm64 -t $CI_REGISTRY_IMAGE:1.3.0-postgres-11-arm64 .
   only:
     - 1.3.0-postgres-11-multiarch
+   changes:
+      - Dockerfile
   tags: 
     - aarch64
 
