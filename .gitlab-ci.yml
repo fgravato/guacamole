@@ -5,9 +5,9 @@ stages:
 
 variables:
   DOCKER_BUILDKIT: 1
-  DOCKERHUB_arm64_IMAGE: unsafetypin/guacamole:1.3.0-postgres-11-arm64
-  DOCKERHUB_amd64_IMAGE: unsafetypin/guacamole:1.3.0-postgres-11-amd64
-  DOCKERHUB_MULTIARCH_IMAGE: unsafetypin/guacamole:1.3.0-postgres-11-MULTIARCH
+  DOCKERHUB_arm64_IMAGE: unsafetypin/arm64:1.3.0-postgres-11-arm64
+  DOCKERHUB_amd64_IMAGE: unsafetypin/amd64:1.3.0-postgres-11-amd64
+  DOCKERHUB_MULTIARCH_IMAGE: unsafetypin/guacamole:1.3.0-postgres-11
 
 create-image-amd64:
   stage: create-image
