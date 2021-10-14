@@ -12,15 +12,31 @@ ENV ARCH=amd64 \
   S6_OVERLAY_VERSION=2.2.0.3 \
   CATALINA_HOME=/usr/local/tomcat
 
-# Apply the s6-overlay
+### S6-Overlay - multiarch
+## Requires buildkit or buildx for TARGETARCH
+
+ARG TARGETARCH
+
 RUN \
-  apt-get update \
-  && apt-get install -y curl \
-  && curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${ARCH}.tar.gz" \
-  && tar -xzf s6-overlay-${ARCH}.tar.gz -C / \
-  && tar -xzf s6-overlay-${ARCH}.tar.gz -C /usr ./bin \
-  && rm -rf s6-overlay-${ARCH}.tar.gz \
-  && mkdir -p ${GUACAMOLE_HOME} \
+    apt-get update \
+    && apt-get install -y curl
+
+RUN [ "$TARGETARCH" = "arm64" ] && cd /tmp && curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-aarch64.tar.gz" || exit 0
+
+RUN [ "$TARGETARCH" = "amd64" ] && cd /tmp && curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-amd64.tar.gz" || exit 0
+
+RUN \
+ cd /tmp && \
+ tar xzf s6-overlay-*.tar.gz -C / && \
+ tar -xzf s6-overlay-*.tar.gz -C /usr ./bin && \
+ rm s6-overlay-*.tar.gz
+
+### S6-Overlay - multiarch
+
+
+# Create initial guac directories
+RUN \
+    mkdir -p ${GUACAMOLE_HOME} \
     ${GUACAMOLE_HOME}/lib \
     ${GUACAMOLE_HOME}/extensions
 
@@ -30,7 +46,7 @@ WORKDIR ${GUACAMOLE_HOME}
 # Install dependencies
 RUN \
     apt-get update \
-    && apt-get install -y curl ca-certificates gnupg \
+    && apt-get install -y ca-certificates gnupg \
     && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
     && echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
