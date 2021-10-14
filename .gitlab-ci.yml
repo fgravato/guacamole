@@ -47,6 +47,10 @@ create-image-arm64:
 
 dockerhub:
   stage: dockerhub
+  image: docker:latest
+  services:
+   - name: docker:dind
+     command: ["--experimental"]  
   before_script:
   - docker login -u $dockerhub_username -p $dockerhub_token
   script:
