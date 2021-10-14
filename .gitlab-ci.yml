@@ -1,13 +1,17 @@
 stages:
-  - create-image
+  - create-image-amd64
+  - create-image-arm64
   - dockerhub
+  - manifest
 
 variables:
   DOCKER_BUILDKIT: 1
-  DOCKERHUB_IMAGE: unsafetypin/guacamole:1.3.0-postgres-11-multiarch
+  DOCKERHUB_arm64_IMAGE: unsafetypin/guacamole:1.3.0-postgres-11-arm64
+  DOCKERHUB_amd64_IMAGE: unsafetypin/guacamole:1.3.0-postgres-11-amd64
+  DOCKERHUB_MULTIARCH_IMAGE: unsafetypin/guacamole:1.3.0-postgres-11-MULTIARCH
 
-create-image:
-  stage: create-image
+create-image-amd64:
+  stage: create-image-amd64
   image: docker:latest
   services:
    - name: docker:dind
@@ -19,10 +23,28 @@ create-image:
     - curl --silent -L "https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
     - chmod a+x ~/.docker/cli-plugins/docker-buildx
     - docker buildx create --driver-opt network=host --use
-    - docker buildx build --push --platform linux/amd64,linux/arm64 -t $CI_REGISTRY_IMAGE:1.3.0-postgres-11-multiarch .
-    - docker manifest inspect $CI_REGISTRY_IMAGE:1.3.0-postgres-11-multiarch
+    - docker buildx build --push --platform linux/amd64 -t $CI_REGISTRY_IMAGE:1.3.0-postgres-11-amd64 .
   only:
     - 1.3.0-postgres-11-multiarch
+
+create-image-arm64:
+  stage: create-image-arm64
+  image: docker:latest
+  services:
+   - name: docker:dind
+     command: ["--experimental"]
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - apk add curl
+    - mkdir -vp ~/.docker/cli-plugins/
+    - curl --silent -L "https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-arm64" > ~/.docker/cli-plugins/docker-buildx
+    - chmod a+x ~/.docker/cli-plugins/docker-buildx
+    - docker buildx create --driver-opt network=host --use
+    - docker buildx build --push --platform linux/arm64 -t $CI_REGISTRY_IMAGE:1.3.0-postgres-11-arm64 .
+  only:
+    - 1.3.0-postgres-11-multiarch
+  tags: 
+    - aarch64
 
 dockerhub:
   stage: dockerhub
@@ -32,9 +54,31 @@ dockerhub:
      command: ["--experimental"]  
   script:
     - docker login -u $dockerhub_username -p $dockerhub_token
-    - docker pull $CI_REGISTRY_IMAGE:1.3.0-postgres-11-multiarch
-    - docker tag $CI_REGISTRY_IMAGE:1.3.0-postgres-11-multiarch $DOCKERHUB_IMAGE
-    - docker push $DOCKERHUB_IMAGE
+    - docker pull $CI_REGISTRY_IMAGE:1.3.0-postgres-11-amd64
+    - docker tag $CI_REGISTRY_IMAGE:1.3.0-postgres-11-amd64 $DOCKERHUB_amd64_IMAGE
+    - docker push $DOCKERHUB_amd64_IMAGE
+    - docker pull $CI_REGISTRY_IMAGE:1.3.0-postgres-11-arm64
+    - docker tag $CI_REGISTRY_IMAGE:1.3.0-postgres-11-arm64 $DOCKERHUB_arm64_IMAGE
+    - docker push $DOCKERHUB_arm64_IMAGE
   only:
     - 1.3.0-postgres-11-multiarch
 
+manifest:
+  stage: manifest
+  script:
+    # first make sure we have the containers we use in the manifest
+    - docker pull $DOCKERHUB_amd64_IMAGE
+    - docker pull $DOCKERHUB_arm64_IMAGE
+    - docker manifest create $DOCKERHUB_MULTIARCH_IMAGE
+        $DOCKERHUB_amd64_IMAGE
+        $DOCKERHUB_arm64_IMAGE
+    - docker manifest annotate --os linux --arch amd64
+        $DOCKERHUB_MULTIARCH_IMAGE
+        $DOCKERHUB_amd64_IMAGE
+    - docker manifest annotate --os linux --arch arm --variant v6
+        $DOCKERHUB_MULTIARCH_IMAGE
+        $DOCKERHUB_aRM64_IMAGE
+    # the login to the gitlab registry sometimes times out so make sure
+    # we are logged on before pushing the manifest
+    - docker login -u $dockerhub_username -p $dockerhub_token
+    - docker manifest push $DOCKERHUB_MULTIARCH_IMAGE
