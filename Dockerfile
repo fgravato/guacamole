@@ -1,5 +1,6 @@
 FROM tomcat:9.0-jdk11-openjdk-slim-bullseye
 LABEL maintainer="gregg@largenut.com"
+LABEL guacamole-version="1.3.0"
 USER root
 
 ENV ARCH=amd64 \
