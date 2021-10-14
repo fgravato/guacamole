@@ -1,6 +1,7 @@
 stages:
   - create-image-amd64
   - create-image-arm64
+  - dockerhub
 
 variables:
   DOCKER_BUILDKIT: 1
