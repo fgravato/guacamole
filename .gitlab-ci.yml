@@ -28,7 +28,7 @@ create-image-amd64:
     - docker buildx build --push --platform linux/amd64 -t $CI_REGISTRY_IMAGE:$DOCKERHUB_amd64_IMAGE .
   only:
     refs:
-      - $CI_COMMIT_REF_NAME
+      - $DOCKERHUB_MULTIARCH_IMAGE
     changes:
       - Dockerfile
 
@@ -48,7 +48,7 @@ create-image-arm64:
     - docker buildx build --push --platform linux/arm64 -t $CI_REGISTRY_IMAGE:$DOCKERHUB_arm64_IMAGE .
   only:
     refs:
-      - $CI_COMMIT_REF_NAME
+      - $DOCKERHUB_MULTIARCH_IMAGE
     changes:
       - Dockerfile
   tags: 
@@ -66,7 +66,7 @@ dockerhub-amd64:
     - docker tag $CI_REGISTRY_IMAGE:$DOCKERHUB_amd64_IMAGE $DOCKERHUB_amd64:$DOCKERHUB_amd64_IMAGE
     - docker push $DOCKERHUB_amd64:$DOCKERHUB_amd64_IMAGE
   only:
-    - $CI_COMMIT_REF_NAME
+    - $DOCKERHUB_MULTIARCH_IMAGE
 
 dockerhub-arm64:
   stage: dockerhub
@@ -80,7 +80,7 @@ dockerhub-arm64:
     - docker tag $CI_REGISTRY_IMAGE:$DOCKERHUB_arm64_IMAGE $DOCKERHUB_arm64:$DOCKERHUB_arm64_IMAGE
     - docker push $DOCKERHUB_arm64:$DOCKERHUB_arm64_IMAGE
   only:
-    - $CI_COMMIT_REF_NAME
+    - $DOCKERHUB_MULTIARCH_IMAGE
     
 manifest:
   stage: manifest
@@ -103,4 +103,4 @@ manifest:
     - docker login -u $dockerhub_username -p $dockerhub_token
     - docker manifest push $DOCKERHUB_repo:$DOCKERHUB_MULTIARCH_IMAGE
   only:
-    - $CI_COMMIT_REF_NAME
+    - $DOCKERHUB_MULTIARCH_IMAGE
