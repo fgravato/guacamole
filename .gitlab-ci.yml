@@ -75,6 +75,10 @@ dockerhub-arm64:
 
 manifest:
   stage: manifest
+  image: docker:latest
+  services:
+   - name: docker:dind
+     command: ["--experimental"]  
   script:
     # first make sure we have the containers we use in the manifest
     - docker pull $DOCKERHUB_amd64_IMAGE
