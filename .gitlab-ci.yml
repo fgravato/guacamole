@@ -23,9 +23,9 @@ manifest:
     - docker manifest annotate --os linux --arch amd64
         $DOCKERHUB_MULTIARCH_IMAGE
         $DOCKERHUB_amd64_IMAGE
-    - docker manifest annotate --os linux --arch arm --variant v6
+    - docker manifest annotate --os linux --arch arm64
         $DOCKERHUB_MULTIARCH_IMAGE
-        $DOCKERHUB_aRM64_IMAGE
+        $DOCKERHUB_arm64_IMAGE
     # the login to the gitlab registry sometimes times out so make sure
     # we are logged on before pushing the manifest
     - docker login -u $dockerhub_username -p $dockerhub_token
