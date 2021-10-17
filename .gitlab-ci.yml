@@ -1,53 +1,106 @@
-image: docker:20-dind
-services:
-  - name: docker:20-dind
-    alias: docker
-    command: ["--tls=false"]
-variables:
-  DOCKER_DRIVER: overlay
-  DOCKER_HOST: /var/run/docker.sock
-  DOCKER_TLS_CERTDIR: ""
-  IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  FF_GITLAB_REGISTRY_HELPER_IMAGE: 1
-
 stages:
-- build
-- release
-- dockerhub
+  - create-image
+  - dockerhub
+  - manifest-latest
 
 variables:
-  TEST_IMAGE: registry.largenut.com/unsafetypin/docker-guacamole/docker-guacamole:$CI_COMMIT_REF_NAME
-  RELEASE_IMAGE: registry.largenut.com/unsafetypin/docker-guacamole/docker-guacamole:latest
-  DOCKERHUB_IMAGE: unsafetypin/guacamole:latest
+  DOCKER_BUILDKIT: 1
+  DOCKERHUB_repo: unsafetypin/guacamole
+  DOCKERHUB_arm64: unsafetypin/arm64
+  DOCKERHUB_amd64: unsafetypin/amd64
+  DOCKERHUB_arm64_IMAGE: guacamole-arm64-latest
+  DOCKERHUB_amd64_IMAGE: guacamole-amd64-latest
+  DOCKERHUB_LATEST_IMAGE: latest
 
-before_script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.largenut.com
-
-build:
-  stage: build
+create-image-amd64:
+  stage: create-image
+  image: docker:latest
+  services:
+   - name: docker:dind
+     command: ["--experimental"]
   script:
-    - docker build --pull -t $TEST_IMAGE .
-    - docker push $TEST_IMAGE
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - apk add curl
+    - mkdir -vp ~/.docker/cli-plugins/
+    - curl --silent -L "https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+    - chmod a+x ~/.docker/cli-plugins/docker-buildx
+    - docker buildx create --driver-opt network=host --use
+    - docker buildx build --push --platform linux/amd64 -t $CI_REGISTRY_IMAGE:$DOCKERHUB_amd64_IMAGE .
   only:
+    refs:
+      - master
     changes:
       - Dockerfile
 
-release:
-  stage: release
+create-image-arm64:
+  stage: create-image
+  image: docker:latest
+  services:
+   - name: docker:dind
+     command: ["--experimental"]
   script:
-    - docker pull $TEST_IMAGE
-    - docker tag $TEST_IMAGE $RELEASE_IMAGE
-    - docker push $RELEASE_IMAGE
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+    - apk add curl
+    - mkdir -vp ~/.docker/cli-plugins/
+    - curl --silent -L "https://github.com/docker/buildx/releases/download/v0.6.3/buildx-v0.6.3.linux-arm64" > ~/.docker/cli-plugins/docker-buildx
+    - chmod a+x ~/.docker/cli-plugins/docker-buildx
+    - docker buildx create --driver-opt network=host --use
+    - docker buildx build --push --platform linux/arm64 -t $CI_REGISTRY_IMAGE:$DOCKERHUB_arm64_IMAGE .
+  only:
+    refs:
+      - master
+    changes:
+      - Dockerfile
+  tags: 
+    - aarch64
+
+dockerhub-amd64:
+  stage: dockerhub
+  image: docker:latest
+  services:
+   - name: docker:dind
+     command: ["--experimental"]  
+  script:
+    - docker login -u $dockerhub_username -p $dockerhub_token
+    - docker pull $CI_REGISTRY_IMAGE:$DOCKERHUB_amd64_IMAGE
+    - docker tag $CI_REGISTRY_IMAGE:$DOCKERHUB_amd64_IMAGE $DOCKERHUB_amd64:$DOCKERHUB_amd64_IMAGE
+    - docker push $DOCKERHUB_amd64:$DOCKERHUB_amd64_IMAGE
   only:
     - master
-    
-dockerhub:
+
+dockerhub-arm64:
   stage: dockerhub
-  before_script:
-  - docker login -u $dockerhub_username -p $dockerhub_token
+  image: docker:latest
+  services:
+   - name: docker:dind
+     command: ["--experimental"]  
   script:
-    - docker pull $RELEASE_IMAGE
-    - docker tag $RELEASE_IMAGE $DOCKERHUB_IMAGE
-    - docker push $DOCKERHUB_IMAGE
+    - docker login -u $dockerhub_username -p $dockerhub_token
+    - docker pull $CI_REGISTRY_IMAGE:$DOCKERHUB_arm64_IMAGE
+    - docker tag $CI_REGISTRY_IMAGE:$DOCKERHUB_arm64_IMAGE $DOCKERHUB_arm64:$DOCKERHUB_arm64_IMAGE
+    - docker push $DOCKERHUB_arm64:$DOCKERHUB_arm64_IMAGE
+  only:
+    - master
+
+manifest-latest:
+  stage: manifest
+  image: docker:latest
+  services:
+   - name: docker:dind
+     command: ["--experimental"]  
+  script:
+    - docker pull $DOCKERHUB_amd64:$DOCKERHUB_amd64_IMAGE
+    - docker pull $DOCKERHUB_arm64:$DOCKERHUB_arm64_IMAGE
+    - docker manifest create $DOCKERHUB_repo:$DOCKERHUB_LATEST_IMAGE
+        $DOCKERHUB_amd64:$DOCKERHUB_amd64_IMAGE
+        $DOCKERHUB_arm64:$DOCKERHUB_arm64_IMAGE
+    - docker manifest annotate --os linux --arch amd64
+        $DOCKERHUB_repo:$DOCKERHUB_LATEST_IMAGE
+        $DOCKERHUB_amd64:$DOCKERHUB_amd64_IMAGE
+    - docker manifest annotate --os linux --arch arm64
+        $DOCKERHUB_repo:$DOCKERHUB_LATEST_IMAGE
+        $DOCKERHUB_arm64:$DOCKERHUB_arm64_IMAGE
+    - docker login -u $dockerhub_username -p $dockerhub_token
+    - docker manifest push $DOCKERHUB_repo:$DOCKERHUB_LATEST_IMAGE
   only:
     - master
