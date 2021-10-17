@@ -83,7 +83,7 @@ dockerhub-arm64:
     - master
 
 manifest-latest:
-  stage: manifest
+  stage: manifest-latest
   image: docker:latest
   services:
    - name: docker:dind
