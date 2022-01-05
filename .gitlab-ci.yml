@@ -128,4 +128,4 @@ manifest-latest:
     - docker login -u $dockerhub_username -p $dockerhub_token
     - docker manifest push $DOCKERHUB_repo:$DOCKERHUB_LATEST_IMAGE
   only:
-    - 1.3.0-postgres-11
+    - 1.4.0-postgres-11
