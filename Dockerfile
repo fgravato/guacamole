@@ -1,10 +1,11 @@
 FROM tomcat:9.0-jdk11-openjdk-slim-bullseye
 LABEL maintainer="gregg@largenut.com"
-LABEL guacamole-version="1.3.0"
+LABEL guacamole-version="1.4.0"
+LABEL pgmajor-version="11"
 USER root
 
 ENV ARCH=amd64 \
-  GUAC_VER=1.3.0 \
+  GUAC_VER=1.4.0 \
   GUACAMOLE_HOME=/app/guacamole \
   PG_MAJOR=11 \
   PGDATA=/config/postgres \
@@ -86,13 +87,7 @@ RUN set -x \
 # Add optional extensions
 RUN set -xe \
   && mkdir ${GUACAMOLE_HOME}/extensions-available \
-# The auth-header extention is on version 1.2.0 - this must be downloaded separately and named to version 1.3.0 to work with the extension enable script which is looking for extensions that match the guacamole version defined in env var "GUAC_VER"
-  && curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-auth-header-1.2.0.tar.gz" \
-  && tar -xzf guacamole-auth-header-1.2.0.tar.gz \
-  && cp guacamole-auth-header-1.2.0/guacamole-auth-header-1.2.0.jar ${GUACAMOLE_HOME}/extensions-available/guacamole-auth-header-${GUAC_VER}.jar \
-  && rm -rf guacamole-auth-header-1.2.0 guacamole-auth-header-1.2.0.tar.gz \
-# This ends adding the auth-header extension
-  && for i in auth-ldap auth-duo auth-cas auth-openid auth-quickconnect auth-totp auth-saml; do \
+  && for i in auth-ldap auth-duo auth-cas auth-openid auth-quickconnect auth-totp auth-saml auth-header; do \
     echo "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/binary/guacamole-${i}-${GUAC_VER}.tar.gz" \
     && tar -xzf guacamole-${i}-${GUAC_VER}.tar.gz \
