@@ -64,7 +64,7 @@ RUN \
     git build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
     libpango1.0-dev libvncserver-dev libtelnet-dev \
-    libssl-dev libvorbis-dev libssh2-1-dev libwebp-dev libpulse-dev freerdp2-dev \
+    libssl-dev ffmpeg libvorbis-dev libssh2-1-dev libwebp-dev libpulse-dev freerdp2-dev \
     ghostscript postgresql-${PG_MAJOR} \
     && rm -rf /var/lib/apt/lists/*
 
