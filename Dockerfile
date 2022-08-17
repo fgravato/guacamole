@@ -74,6 +74,7 @@ RUN [ "$ARCH" = "amd64" ] && ln -s /usr/local/lib/freerdp /usr/lib/x86_64-linux-
 # Install guacamole-server
 RUN git clone https://github.com/apache/guacamole-server \
   && cd guacamole-server \
+  && autoreconf -fi \
   && ./configure --with-init-dir=/etc/init.d \
   && make \
   && make install \
