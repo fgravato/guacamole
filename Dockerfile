@@ -1,4 +1,4 @@
-FROM debian:testing
+FROM debian:bookworm-slim
 LABEL maintainer="gregg@largenut.com"
 LABEL guacamole-version="1.4.0"
 LABEL pgmajor-version="11"
