@@ -61,7 +61,7 @@ RUN \
     && echo "deb http://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
     && apt-get update \
     && apt-get install -y \
-    build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
+    git build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
     libpango1.0-dev libvncserver-dev libtelnet-dev \
     libssl-dev libvorbis-dev libssh2-1-dev libwebp-dev libpulse-dev freerdp2-dev \
@@ -72,9 +72,8 @@ RUN \
 RUN [ "$ARCH" = "amd64" ] && ln -s /usr/local/lib/freerdp /usr/lib/x86_64-linux-gnu/freerdp || exit 0
 
 # Install guacamole-server
-RUN curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/source/guacamole-server-${GUAC_VER}.tar.gz" \
-  && tar -xzf guacamole-server-${GUAC_VER}.tar.gz \
-  && cd guacamole-server-${GUAC_VER} \
+RUN git clone https://github.com/apache/guacamole-server \
+  && cd guacamole-server \
   && ./configure --with-init-dir=/etc/init.d \
   && make \
   && make install \
