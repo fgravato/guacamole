@@ -43,12 +43,11 @@ RUN \
 
 ### S6-Overlay - multiarch
 
-
 # Create initial guac directories
 RUN \
     mkdir -p /app/guacamole \
-    && mkdir -p/app/guacamole/lib \
-    && mkdir -p/app/guacamole/extensions
+    && mkdir -p /app/guacamole/lib \
+    && mkdir -p /app/guacamole/extensions
 
 # set workdir
 WORKDIR /app/guacamole
