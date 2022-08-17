@@ -68,7 +68,7 @@ dockerhub-amd64:
     - docker tag $CI_REGISTRY_IMAGE:$DOCKERHUB_amd64_IMAGE $DOCKERHUB_amd64:$DOCKERHUB_amd64_IMAGE
     - docker push $DOCKERHUB_amd64:$DOCKERHUB_amd64_IMAGE
   only:
-    - 1.4.0-postgres-11-testing
+    - 1.4.0-postgres-11
 
 dockerhub-arm64:
   stage: dockerhub
@@ -82,7 +82,7 @@ dockerhub-arm64:
     - docker tag $CI_REGISTRY_IMAGE:$DOCKERHUB_arm64_IMAGE $DOCKERHUB_arm64:$DOCKERHUB_arm64_IMAGE
     - docker push $DOCKERHUB_arm64:$DOCKERHUB_arm64_IMAGE
   only:
-    - 1.4.0-postgres-11-testing
+    - 1.4.0-postgres-11
     
 manifest:
   stage: manifest
@@ -105,7 +105,7 @@ manifest:
     - docker login -u $dockerhub_username -p $dockerhub_token
     - docker manifest push $DOCKERHUB_repo:$DOCKERHUB_MULTIARCH_IMAGE
   only:
-    - 1.4.0-postgres-11-testing
+    - 1.4.0-postgres-11
 
 manifest-latest:
   stage: manifest
