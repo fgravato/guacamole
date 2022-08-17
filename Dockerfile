@@ -51,11 +51,13 @@ RUN \
     && apt-get install -y ca-certificates gnupg \
     && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
     && echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+    && echo "deb http://http.us.debian.org/debian/ testing non-free contrib main" > /etc/apt/sources.list.d/debian-testing.list \
+    && echo -e "Package: *\nPin: release a=testing\nPin-Priority: -2" > /etc/apt/preferences.d/testing \
     && apt-get update \
     && apt-get install -y \
     build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
-    libpango1.0-dev libssh2-1-dev libvncserver-dev libtelnet-dev \
+    libpango1.0-dev libssh2-1-dev/testing libvncserver-dev libtelnet-dev \
     libssl-dev libvorbis-dev libwebp-dev libpulse-dev freerdp2-dev \
     ghostscript postgresql-${PG_MAJOR} \
     && rm -rf /var/lib/apt/lists/*
