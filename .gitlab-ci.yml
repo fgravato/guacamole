@@ -9,9 +9,9 @@ variables:
   DOCKERHUB_repo: unsafetypin/guacamole
   DOCKERHUB_arm64: unsafetypin/arm64
   DOCKERHUB_amd64: unsafetypin/amd64
-  DOCKERHUB_arm64_IMAGE: 1.4.0-postgres-11-arm64
-  DOCKERHUB_amd64_IMAGE: 1.4.0-postgres-11-amd64
-  DOCKERHUB_MULTIARCH_IMAGE: 1.4.0-postgres-11
+  DOCKERHUB_arm64_IMAGE: 1.4.0-postgres-11-arm64-testing
+  DOCKERHUB_amd64_IMAGE: 1.4.0-postgres-11-amd64-testing
+  DOCKERHUB_MULTIARCH_IMAGE: 1.4.0-postgres-11-testing
   DOCKERHUB_LATEST_IMAGE: latest
 
 create-image-amd64:
