@@ -1,4 +1,4 @@
-FROM tomcat:9.0-jdk11-openjdk-slim-bullseye
+FROM ubuntu:latest
 LABEL maintainer="gregg@largenut.com"
 LABEL guacamole-version="1.4.0"
 LABEL pgmajor-version="11"
@@ -14,15 +14,21 @@ ENV ARCH=amd64 \
   S6_OVERLAY_VERSION=2.2.0.3 \
   CATALINA_HOME=/usr/local/tomcat
 
+RUN \ 
+    apt-get -y update && apt-get -y upgrade \
+    && apt-get -y install openjdk-11-jdk wget \
+    && mkdir -p /usr/local/tomcat \
+    && wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.65/bin/apache-tomcat-9.0.65.tar.gz -O /tmp/tomcat.tar.gz \
+    && cd /tmp && tar xvfz tomcat.tar.gz \
+    && cp -Rv /tmp/apache-tomcat-9.0.65/* /usr/local/tomcat/
+
 ### S6-Overlay - multiarch
 ## Requires buildkit or buildx for TARGETARCH
 
 ARG TARGETARCH
 
 RUN \
-    echo "deb http://http.us.debian.org/debian/ testing non-free contrib main" >> /etc/apt/sources.list \
-    && apt-get update \
-    && apt-get install -y libssh2-1-dev/testing \
+    apt-get update \
     && apt-get install -y curl
 
 RUN [ "$TARGETARCH" = "arm64" ] && cd /tmp && curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-aarch64.tar.gz" || exit 0
@@ -58,7 +64,7 @@ RUN \
     build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
     libpango1.0-dev libvncserver-dev libtelnet-dev \
-    libssl-dev libvorbis-dev libwebp-dev libpulse-dev freerdp2-dev \
+    libssl-dev libvorbis-dev libssh2-1-dev libwebp-dev libpulse-dev freerdp2-dev \
     ghostscript postgresql-${PG_MAJOR} \
     && rm -rf /var/lib/apt/lists/*
 
