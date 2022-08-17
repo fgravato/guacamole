@@ -46,12 +46,12 @@ RUN \
 
 # Create initial guac directories
 RUN \
-    mkdir -p ${GUACAMOLE_HOME} \
-    ${GUACAMOLE_HOME}/lib \
-    ${GUACAMOLE_HOME}/extensions
+    mkdir -p /app/guacamole \
+    && mkdir -p/app/guacamole/lib \
+    && mkdir -p/app/guacamole/extensions
 
 # set workdir
-WORKDIR ${GUACAMOLE_HOME}
+WORKDIR /app/guacamole
 
 # Install dependencies
 RUN \
