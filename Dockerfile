@@ -20,7 +20,9 @@ ENV ARCH=amd64 \
 ARG TARGETARCH
 
 RUN \
-    apt-get update \
+    echo "deb http://http.us.debian.org/debian/ testing non-free contrib main" >> /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y libssh2-1-dev/testing \
     && apt-get install -y curl
 
 RUN [ "$TARGETARCH" = "arm64" ] && cd /tmp && curl -SLO "https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-aarch64.tar.gz" || exit 0
@@ -51,7 +53,6 @@ RUN \
     && apt-get install -y ca-certificates gnupg \
     && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
     && echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
-    && echo "deb http://http.us.debian.org/debian/ testing non-free contrib main" > /etc/apt/sources.list.d/debian-testing.list \
     && apt-get update \
     && apt-get install -y \
     build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
@@ -59,7 +60,6 @@ RUN \
     libpango1.0-dev libvncserver-dev libtelnet-dev \
     libssl-dev libvorbis-dev libwebp-dev libpulse-dev freerdp2-dev \
     ghostscript postgresql-${PG_MAJOR} \
-    && apt-get install -y -t testing libssh2-1-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Link FreeRDP to where guac expects it to be
