@@ -1,7 +1,7 @@
 FROM tomcat:9.0-jdk11-openjdk-slim-bullseye
 LABEL maintainer="gregg@largenut.com"
 LABEL guacamole-version="1.4.0"
-LABEL pgmajor-version="11"
+LABEL pgmajor-version="14"
 USER root
 
 ENV ARCH=amd64 \
