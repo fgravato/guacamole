@@ -56,10 +56,6 @@ WORKDIR ${GUACAMOLE_HOME}
 # Install dependencies
 RUN \
     apt-get update \
-    && apt-get install -y ca-certificates gnupg \
-    && curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null \
-    && echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
-    && apt-get update \
     && apt-get install -y \
     build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
