@@ -56,9 +56,10 @@ RUN \
     && apt-get install -y \
     build-essential libcairo2-dev libjpeg62-turbo-dev libpng-dev \
     libtool-bin libossp-uuid-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev \
-    libpango1.0-dev libssh2-1-dev/testing libvncserver-dev libtelnet-dev \
+    libpango1.0-dev libvncserver-dev libtelnet-dev \
     libssl-dev libvorbis-dev libwebp-dev libpulse-dev freerdp2-dev \
     ghostscript postgresql-${PG_MAJOR} \
+    && apt-get install -y -t testing libssh2-1-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Link FreeRDP to where guac expects it to be
