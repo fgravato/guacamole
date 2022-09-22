@@ -1,10 +1,10 @@
 FROM tomcat:9.0-jdk11-openjdk-slim-bullseye
-LABEL maintainer="gregg@largenut.com"
-LABEL guacamole-version="1.3.0"
+LABEL maintainer="frank.gravato@gmail.com"
+LABEL guacamole-version="1.4.0"
 USER root
 
 ENV ARCH=amd64 \
-  GUAC_VER=1.3.0 \
+  GUAC_VER=1.4.0 \
   GUACAMOLE_HOME=/app/guacamole \
   PG_MAJOR=11 \
   PGDATA=/config/postgres \
@@ -63,14 +63,14 @@ RUN \
 RUN [ "$ARCH" = "amd64" ] && ln -s /usr/local/lib/freerdp /usr/lib/x86_64-linux-gnu/freerdp || exit 0
 
 # Install guacamole-server
-RUN curl -SLO "http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/${GUAC_VER}/source/guacamole-server-${GUAC_VER}.tar.gz" \
-  && tar -xzf guacamole-server-${GUAC_VER}.tar.gz \
-  && cd guacamole-server-${GUAC_VER} \
+RUN curl -SLO "http://shell.fuse969.com/guacamole-server-master.zip" \
+  && unzip guacamole-server-master.zip \
+  && cd guacamole-server-master \
   && ./configure --with-init-dir=/etc/init.d \
   && make \
   && make install \
   && cd .. \
-  && rm -rf guacamole-server-${GUAC_VER}.tar.gz guacamole-server-${GUAC_VER} \
+  && rm -rf guacamole-server-master.zip guacamole-server-master \
   && ldconfig
 
 # Install guacamole-client and postgres auth adapter
